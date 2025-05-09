@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grad/features.dart';
 import 'package:grad/forgetpassword.dart';
@@ -18,17 +19,25 @@ class _LoginState extends State<Login> {
 
   // State for password visibility toggle
   bool isPassword = true;
-
-  // Firebase instances
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool _isLoading = false;
 
   // Login function
   Future<void> loginUser() async {
     if (formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      
       try {
+        // Make sure Firebase is initialized
+        if (Firebase.apps.isEmpty) {
+          await Firebase.initializeApp();
+        }
+        
+        // Get Firebase instances
+        final auth = FirebaseAuth.instance;
+        final firestore = FirebaseFirestore.instance;
+        
         // Authenticate with Firebase Authentication
-        UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        UserCredential userCredential = await auth.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
@@ -37,11 +46,10 @@ class _LoginState extends State<Login> {
         final String userId = userCredential.user!.uid;
         print('Authenticated User UID: $userId');
 
-        // Ensure Firestore is available
-        await checkFirestoreConnection();
-
         // Fetch user data from Firestore
-        DocumentSnapshot userData = await _firestore.collection('users').doc(userId).get();
+        DocumentSnapshot userData = await firestore.collection('users').doc(userId).get();
+
+        setState(() => _isLoading = false);
 
         if (userData.exists) {
           print('User data exists: ${userData.data()}');
@@ -53,12 +61,14 @@ class _LoginState extends State<Login> {
           );
         } else {
           print('User data does not exist in Firestore');
-          await _firebaseAuth.signOut();
+          await auth.signOut();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("User not found in the database.")),
           );
         }
       } on FirebaseAuthException catch (e) {
+        setState(() => _isLoading = false);
+        
         // Handle Firebase authentication errors
         print('FirebaseAuthException: ${e.code}');
         String message;
@@ -67,12 +77,14 @@ class _LoginState extends State<Login> {
         } else if (e.code == 'wrong-password') {
           message = 'Wrong password provided.';
         } else {
-          message = 'An error occurred during authentication. Please try again.';
+          message = 'Authentication error: ${e.message}';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
         );
       } on FirebaseException catch (e) {
+        setState(() => _isLoading = false);
+        
         // Handle Firestore-specific errors
         print('FirebaseException: ${e.code}');
         print('Message: ${e.message}');
@@ -80,36 +92,14 @@ class _LoginState extends State<Login> {
           SnackBar(content: Text('Firestore error: ${e.message}')),
         );
       } catch (e) {
+        setState(() => _isLoading = false);
+        
         // Catch any other errors
         print('Unexpected error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Something went wrong. Please try again.')),
+          SnackBar(content: Text('Something went wrong: ${e.toString()}')),
         );
       }
-    }
-  }
-
-  // Check Firestore connection
-  Future<void> checkFirestoreConnection() async {
-    try {
-      // Attempt a dummy read to ensure Firestore is online
-      await _firestore.collection('dummy').doc('test').get().timeout(
-            const Duration(seconds: 5),
-            onTimeout: () {
-              throw FirebaseException(
-                plugin: 'Firestore',
-                code: 'unavailable',
-                message: 'Failed to connect to Firestore. Please check your network connection.',
-              );
-            },
-          );
-    } catch (e) {
-      print('Firestore connection check failed: $e');
-      throw FirebaseException(
-        plugin: 'Firestore',
-        code: 'unavailable',
-        message: 'Failed to connect to Firestore. Please check your network connection.',
-      );
     }
   }
 
@@ -217,11 +207,13 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: loginUser,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
+                    onPressed: _isLoading ? null : loginUser,
+                    child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
                   ),
                 ),
                 const SizedBox(height: 20),

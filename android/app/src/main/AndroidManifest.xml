@@ -6,27 +6,40 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <!-- ddddddddddd-->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <application
-    android:usesCleartextTraffic="true"
-    android:exported="true"
-    android:label="grad"
-    android:icon="@mipmap/ic_launcher">
-    <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"/>
-    <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"/>
-    </application>
-
-    
-
 
     <application
         android:label="grad"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        
+        <!-- Flutter Local Notifications Receivers -->
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+                  android:exported="false"/>
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" 
+                  android:exported="false"/>
+                  
+        <!-- Firebase Messaging Service -->
+        <service
+            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        
+        <!-- Firebase Messaging Receiver for notifications -->
+        <receiver
+            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </receiver>
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -48,11 +61,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
+        <!-- Set default notification channel and icon for Firebase Messaging -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="medication_channel" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
     </application>
 
     <!-- Required to query activities that can process text -->

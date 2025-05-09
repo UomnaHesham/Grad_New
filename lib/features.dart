@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grad/appoinment.dart';
-import 'package:grad/chat_screen.dart';
 import 'package:grad/chatbot.dart';
 import 'package:grad/finddoctor.dart';
 import 'package:grad/login.dart';
@@ -141,7 +140,7 @@ class FeaturesPage extends StatelessWidget {
                         // Navigate to Talk to Chat Bot page
                       Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ChatScreen()),
+                      MaterialPageRoute(builder: (context) => ChatBotPage()),
                     );
                       },
                       child: Column(
