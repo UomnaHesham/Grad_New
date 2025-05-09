@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grad/appoinment.dart';
+import 'package:grad/chatbot.dart';
 import 'package:grad/finddoctor.dart';
 import 'package:grad/login.dart';
 import 'package:grad/profile_page.dart';
@@ -82,7 +83,7 @@ class FeaturesPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Setreminder()),
+                          MaterialPageRoute(builder: (context) => SetReminderScreen()),
                         );
                       },
                       child: Column(
@@ -113,7 +114,7 @@ class FeaturesPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Setreminder()),
+                          MaterialPageRoute(builder: (context) => SetReminderScreen()),
                         );
                       },
                       child: Column(
@@ -137,6 +138,10 @@ class FeaturesPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         // Navigate to Talk to Chat Bot page
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatBotPage()),
+                    );
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

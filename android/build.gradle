@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.8.0'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()
@@ -35,12 +35,5 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.jetbrains.kotlin') {
-            details.useVersion '1.8.0'
-        }
-    }
-}
 
-// Apply plugin is not needed here in the root build.gradle, just in the app build.gradle
+

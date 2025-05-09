@@ -15,7 +15,7 @@ void main() async {
     apiKey: "AIzaSyD7x2Q1oq8_aYrstmF-6SOkb99njNYMY_A",
     authDomain: "grad-545d4.firebaseapp.com",
     projectId: "grad-545d4",
-    storageBucket: "grad-545d4.firebasestorage.app",
+    storageBucket: "grad-545d4.appspot.com",
     messagingSenderId: "1084808501135",
     appId: "1:1084808501135:web:66f5a2ead9979175c81dfa",
     measurementId: "G-T3FYDKKGJ2",
