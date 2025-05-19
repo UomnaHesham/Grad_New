@@ -5,6 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:timezone/data/latest.dart' as tz_init;
+import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -45,6 +48,15 @@ void main() async {
       // Mobile platforms use the default options from google-services.json
       await Firebase.initializeApp();
       print("Firebase initialized for mobile successfully");
+      
+      // Initialize Android Alarm Manager for periodic background tasks
+      await AndroidAlarmManager.initialize();
+      print("Android Alarm Manager initialized");
+      
+      // Initialize time zones for scheduled notifications
+      tz_init.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('UTC'));
+      print("Time zones initialized");
     }
     
     // Set background message handler for Firebase Messaging

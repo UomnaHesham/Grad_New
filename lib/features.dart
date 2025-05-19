@@ -4,10 +4,13 @@ import 'package:grad/appoinment.dart';
 import 'package:grad/chatbot.dart';
 import 'package:grad/finddoctor.dart';
 import 'package:grad/login.dart';
+import 'package:grad/my_drugs.dart';
 import 'package:grad/profile_page.dart';
 import 'package:grad/setReminder.dart';
+import 'package:grad/medication_reminder_list_screen.dart';
 
 class FeaturesPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -83,16 +86,16 @@ class FeaturesPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SetReminderScreen()),
+                          MaterialPageRoute(builder: (context) => MedicationReminderListScreen()),
                         );
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.alarm, size: 40, color: Colors.white),
+                          Icon(Icons.medication_outlined, size: 40, color: Colors.white),
                           SizedBox(height: 10),
                           Text(
-                            'Set Medications',
+                            'Medication Reminders',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -138,10 +141,10 @@ class FeaturesPage extends StatelessWidget {
                       ),
                       onPressed: () {
                         // Navigate to Talk to Chat Bot page
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatBotPage()),
-                    );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChatBotPage()),
+                        );
                       },
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -155,6 +158,40 @@ class FeaturesPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                ),                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 63, 198, 255),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        fixedSize: Size(150, 100),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyDrugsPage()),
+                        );
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.medication, size: 40, color: Colors.white),
+                          SizedBox(height: 10),
+                          Text(
+                            'My Drugs',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),                    // Placeholder container with the same size as other buttons
+                    Container(
+                      width: 150,
+                      height: 100,
                     ),
                   ],
                 ),
@@ -183,21 +220,30 @@ class FeaturesPage extends StatelessWidget {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
-            // BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: ''),
-            BottomNavigationBarItem(icon:IconButton(onPressed: (){
-               Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AppointmentsPage()),
-                      );
-            }, icon: Icon(Icons.calendar_today))
-            , label: ''),
-            BottomNavigationBarItem(icon:IconButton(onPressed: (){
-               Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfileScreen()),
-                      );
-            }, icon: Icon(Icons.person))
-            , label: ''),
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AppointmentsPage()),
+                  );
+                },
+                icon: Icon(Icons.calendar_today),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  );
+                },
+                icon: Icon(Icons.person),
+              ),
+              label: '',
+            ),
           ],
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.grey,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ChatBotPage extends StatefulWidget {
   @override
@@ -10,26 +12,61 @@ class ChatBotPage extends StatefulWidget {
 class _ChatBotPageState extends State<ChatBotPage> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, String>> messages = [];
-
+  // Get the appropriate server URL based on platform
+  String getServerUrl() {
+    if (kIsWeb) {
+      // When running in web browser
+      return "http://127.0.0.1:5000/chat";
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      // When running on mobile devices
+      return "http://192.168.1.13:5000/chat";  // Your PC's network IP address
+    } else {
+      // For desktop platforms
+      return "http://127.0.0.1:5000/chat";
+    }
+  }
   Future<void> sendMessage(String text) async {
     setState(() {
       messages.add({"sender": "user", "text": text});
     });
 
-    final response = await http.post(
-      Uri.parse("http://127.0.0.1:5000/chat"),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({"message": text}),
-    );
+    try {
+      final serverUrl = getServerUrl();
+      print("Connecting to server: $serverUrl"); // Debug info
+      
+      final response = await http.post(
+        Uri.parse(serverUrl),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"message": text}),
+      ).timeout(
+        const Duration(seconds: 10), // Add timeout
+        onTimeout: () {
+          throw Exception("Connection timed out");
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final reply = json.decode(response.body)["reply"];
+      print("Server response: ${response.statusCode}"); // Debug info
+      
+      if (response.statusCode == 200) {
+        final reply = json.decode(response.body)["reply"];
+        setState(() {
+          messages.add({"sender": "bot", "text": reply});
+        });
+      } else {
+        setState(() {
+          messages.add({
+            "sender": "bot", 
+            "text": "Error: Server returned status code ${response.statusCode}"
+          });
+        });
+      }
+    } catch (e) {
+      print("Error connecting to server: $e"); // Debug info
       setState(() {
-        messages.add({"sender": "bot", "text": reply});
-      });
-    } else {
-      setState(() {
-        messages.add({"sender": "bot", "text": "Failed to get response."});
+        messages.add({
+          "sender": "bot", 
+          "text": "Connection error: ${e.toString()}. Make sure the server is running and accessible."
+        });
       });
     }
 
