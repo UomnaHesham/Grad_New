@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DoctorSurveyPage extends StatefulWidget {
   final String doctorId;
@@ -89,7 +90,35 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
   Future<void> _submitSurvey() async {
     if (!_validateForm()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please answer all questions')),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Please answer all questions',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50), // Green background
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: EdgeInsets.all(16),
+          duration: Duration(seconds: 3),
+        ),
       );
       return;
     }
@@ -97,7 +126,35 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
     final User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must be logged in to submit a survey')),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.login_outlined,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'You must be logged in to submit a survey',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50), // Green background
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: EdgeInsets.all(16),
+          duration: Duration(seconds: 3),
+        ),
       );
       return;
     }
@@ -129,20 +186,71 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
         _isSubmitting = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error submitting survey: $e')),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Error submitting survey: $e',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xFF4CAF50), // Green background
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: EdgeInsets.all(16),
+          duration: Duration(seconds: 4),
+        ),
       );
     }
   }
+
   @override
-  Widget build(BuildContext context) {    
-    return Scaffold(
+  Widget build(BuildContext context) {    return Scaffold(
+      backgroundColor: Color(0xFFF0F8FF), // Light blue background
       appBar: AppBar(
-        title: const Text(
-          'Doctor Survey',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.star_rounded,
+              color: Color(0xFFFFD700),
+              size: 24,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Rate Doctor',
+              style: TextStyle(
+                color: Color(0xFFFFD700),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(width: 8),
+            Icon(
+              Icons.star_rounded,
+              color: Color(0xFFFFD700),
+              size: 24,
+            ),
+          ],
         ),
-        backgroundColor: Colors.blue.shade700,
         centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: _isSubmitting
           ? const Center(
@@ -164,40 +272,90 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
                   Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.blue.shade700,
-                            child: const Icon(Icons.person, size: 36, color: Colors.white),
+                      borderRadius: BorderRadius.circular(16),
+                    ),                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFF0F8FF),
+                              Color(0xFFE6F3FF),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.doctorName,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Color(0xFF3B82F6).withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF3B82F6),
+                                    Color(0xFF1E3A8A),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  'Please rate your experience',
-                                  style: TextStyle(
-                                    color: Colors.grey,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFF3B82F6).withValues(alpha: 0.4),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 8),
                                   ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundColor: Colors.transparent,
+                                child: Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: Colors.white,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.doctorName,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFF1E3A8A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star_rounded,
+                                        color: Color(0xFFFFD700),
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Please rate your experience',
+                                        style: TextStyle(
+                                          color: Color(0xFF3B82F6),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -237,10 +395,26 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
                           children: [
                             Row(
                               children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.blue.shade50,
-                                  child: Text('${index + 1}', 
-                                    style: TextStyle(color: Colors.blue.shade700)),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF3B82F6),
+                                        Color(0xFF1E3A8A),
+                                      ],
+                                    ),
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -263,7 +437,8 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
                                   title: Text(option),
                                   value: option,
                                   groupValue: currentResponse,
-                                  activeColor: Colors.blue.shade700,
+                                  activeColor: Color(0xFFFFD700),
+                                  selectedTileColor: Color(0xFFFFD700).withValues(alpha: 0.1),
                                   onChanged: (value) {
                                     setState(() {
                                       // Update the appropriate response variable
@@ -293,24 +468,60 @@ class _DoctorSurveyPageState extends State<DoctorSurveyPage> {
                   const SizedBox(height: 20),
                   
                   // Submit button
-                  SizedBox(
+                  Container(
                     width: double.infinity,
-                    height: 50,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF3B82F6),
+                          Color(0xFF1E3A8A),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xFF3B82F6).withValues(alpha: 0.4),
+                          blurRadius: 15,
+                          offset: Offset(0, 8),
+                        ),
+                      ],
+                    ),
                     child: ElevatedButton(
                       onPressed: _submitSurvey,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
+                        backgroundColor: Colors.transparent,
                         foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text(
-                        'Submit Survey',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            'Submit Rating',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Icon(
+                            Icons.star_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ],
                       ),
                     ),
                   ),
