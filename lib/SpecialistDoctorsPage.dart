@@ -255,7 +255,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
 
                     List<QueryDocumentSnapshot> doctors = snapshot.data!;
                     return ListView.builder(
-                      padding: EdgeInsets.all(20),
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 100), // Added bottom padding for navigation safety
                       physics: BouncingScrollPhysics(),
                       itemCount: doctors.length,
                       itemBuilder: (context, index) {
@@ -275,7 +275,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
 
   Widget _buildEnhancedDoctorCard(BuildContext context, Map<String, dynamic> doctorData, String doctorId) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: 16), // Reduced margin
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -304,7 +304,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(16), // Reduced padding
         child: Row(
           children: [
             // Doctor Avatar
@@ -327,10 +327,10 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
               ),
               padding: EdgeInsets.all(3),
               child: CircleAvatar(
-                radius: 30,
+                radius: 25, // Reduced size
                 backgroundColor: Colors.grey[100],
                 child: CircleAvatar(
-                  radius: 27,
+                  radius: 22, // Reduced size
                   backgroundImage: NetworkImage(
                     doctorData['profileImage'] ?? 
                     'https://via.placeholder.com/150'
@@ -339,7 +339,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
                 ),
               ),
             ),
-            SizedBox(width: 16),
+            SizedBox(width: 12), // Reduced spacing
             
             // Doctor Info
             Expanded(
@@ -355,7 +355,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
                       letterSpacing: 0.5,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  SizedBox(height: 4), // Reduced spacing
                   
                   // Specialty Badge
                   Container(
@@ -382,7 +382,7 @@ class _SpecialistDoctorsPageState extends State<SpecialistDoctorsPage> with Tick
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 6), // Reduced spacing
                   
                   // Rating
                   FutureBuilder<Map<String, dynamic>>(

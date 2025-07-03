@@ -316,7 +316,7 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 20,
                                   mainAxisSpacing: 20,
-                                  childAspectRatio: 0.95,
+                                  childAspectRatio: 0.65, // Adjusted to 0.65 to fix overflow in Set Medication card
                                   children: [
                                     _buildEnhancedFeatureCard(
                                       icon: Icons.search_rounded,
@@ -342,30 +342,7 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                                         );
                                       },
                                     ),
-                                    _buildEnhancedFeatureCard(
-                                      icon: Icons.medical_services_rounded,
-                                      title: 'Set Medication',
-                                      subtitle: 'Smart reminders',
-                                      gradient: [Color(0xFF1D4ED8), Color(0xFF60A5FA)],
-                                      onTap: () {
-                                        HapticFeedback.mediumImpact();
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, animation, secondaryAnimation) => MedicationReminderListScreen(),
-                                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                              return SlideTransition(
-                                                position: Tween<Offset>(
-                                                  begin: Offset(1.0, 0.0),
-                                                  end: Offset.zero,
-                                                ).animate(animation),
-                                                child: child,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                    _buildSetMedicationCard(), // Special Set Medication card
                                     _buildEnhancedFeatureCard(
                                       icon: Icons.medication_liquid_rounded,
                                       title: 'My Drugs',
@@ -513,7 +490,7 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                               ),
                               SizedBox(height: 24),
                               SizedBox(
-                                height: 350,
+                                height: 320, // Reduced height from 350 to 320
                                 child: _loadingRecommendations
                                     ? Center(
                                         child: Column(
@@ -726,12 +703,12 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(16), // Reduced padding from 24 to 16
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(16), // Reduced padding from 20 to 16
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: gradient,
@@ -749,33 +726,134 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                 ),
                 child: Icon(
                   icon,
-                  size: 32,
+                  size: 28, // Reduced size from 32 to 28
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 16), // Reduced height from 20 to 16
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey[800],
-                  fontSize: 17,
+                  fontSize: 16, // Reduced from 17 to 16
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 6), // Reduced height from 8 to 6
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey[600],
-                  fontSize: 14,
+                  fontSize: 13, // Reduced from 14 to 13
                   fontWeight: FontWeight.w500,
                 ),
                 maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Special Set Medication Card with optimized dimensions to avoid overflow
+  Widget _buildSetMedicationCard() {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MedicationReminderListScreen(),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.6),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF1D4ED8).withOpacity(0.15),
+              blurRadius: 30,
+              offset: Offset(0, 15),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: Colors.white.withOpacity(0.8),
+              blurRadius: 15,
+              offset: Offset(-8, -8),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(14),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF1D4ED8), Color(0xFF60A5FA)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF1D4ED8).withOpacity(0.4),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.medical_services_rounded,
+                  size: 26,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 14),
+              Text(
+                'Set Medication',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Smart reminders',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -818,8 +896,9 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(16), // Reduced padding from 20 to 16
         child: Column(
+          mainAxisSize: MainAxisSize.min, // Added to ensure column only takes necessary space
           children: [
             // Doctor Avatar with enhanced styling
             Container(
@@ -841,16 +920,16 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
               ),
               padding: EdgeInsets.all(3),
               child: CircleAvatar(
-                radius: 40,
+                radius: 35, // Reduced from 40 to 35
                 backgroundColor: Colors.grey[100],
                 child: CircleAvatar(
-                  radius: 37,
+                  radius: 33, // Reduced from 37 to 33
                   backgroundImage: NetworkImage(imageUrl),
                   backgroundColor: Colors.grey[200],
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 12), // Reduced from 16 to 12
             
             // Doctor Name
             Text(
@@ -862,14 +941,14 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                 color: Colors.grey[800],
                 letterSpacing: 0.5,
               ),
-              maxLines: 2,
+              maxLines: 1, // Changed from 2 to 1 to save space
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 8), // Reduced from 10 to 8
             
             // Specialty Badge with enhanced styling
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6), // Reduced padding
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -887,7 +966,7 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                 specialty,
                 style: TextStyle(
                   color: Color(0xFF3B82F6),
-                  fontSize: 13,
+                  fontSize: 12, // Reduced from 13 to 12
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
@@ -896,14 +975,14 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 12), // Reduced from 16 to 12
             
             // Enhanced Book Now Button
             GestureDetector(
               onTap: onTap,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: EdgeInsets.symmetric(vertical: 10), // Reduced from 12 to 10
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
@@ -924,7 +1003,7 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 13, // Reduced from 14 to 13
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
                   ),
@@ -946,4 +1025,6 @@ class _FeaturesPageState extends State<FeaturesPage> with TickerProviderStateMix
       onTap ?? () {},
     );
   }
+  
+  // Keep the old methods for backward compatibility
 }

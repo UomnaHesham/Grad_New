@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Chatbot - Image Upload</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: #e8f5e8;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+
+        .browse-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .preview-area {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .prompt-area {
+            margin-bottom: 25px;
+        }
+
+        .prompt-label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s ease;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .response-area {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .response-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .response-text {
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .error .response-title {
+            color: #721c24;
+        }
+
+        .error .response-text {
+            color: #721c24;
+        }
+
+        .examples {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .examples h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .example-card {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .example-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .example-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="emoji">🏥</div>
+            <h1>Medical Image Analysis</h1>
+            <p>Upload medical images for AI-powered analysis</p>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">Drag & Drop your medical image here</div>
+            <div>or</div>
+            <button class="browse-btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+        </div>
+
+        <div class="preview-area" id="previewArea" style="display: none;">
+            <img id="previewImage" class="preview-image" src="" alt="Preview">
+            <div>📷 Image ready for analysis</div>
+        </div>
+
+        <div class="prompt-area">
+            <label class="prompt-label" for="promptInput">Your Question (Optional):</label>
+            <textarea 
+                id="promptInput" 
+                class="prompt-input" 
+                placeholder="Ask specific questions about the image:
+• Is this X-ray normal?
+• What medicine is this?
+• Analyze this lab result
+• ما رأيك في هذه الأشعة؟
+• ما هو هذا الدواء؟"></textarea>
+        </div>
+
+        <button id="analyzeBtn" class="analyze-btn" onclick="analyzeImage()" disabled>
+            🔍 Analyze Image
+        </button>
+
+        <div class="loading" id="loadingArea">
+            <div class="loading-spinner"></div>
+            <div>Analyzing your image... Please wait</div>
+        </div>
+
+        <div class="response-area" id="responseArea">
+            <div class="response-title" id="responseTitle">Analysis Result:</div>
+            <div class="response-text" id="responseText"></div>
+        </div>
+
+        <div class="examples">
+            <h3>💡 What you can upload:</h3>
+            <div class="example-grid">
+                <div class="example-card">
+                    <div class="example-title">🩻 X-rays & Scans</div>
+                    <div class="example-desc">Chest X-rays, bone fractures, CT scans, MRI images</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">💊 Medications</div>
+                    <div class="example-desc">Pills, medicine bottles, prescription labels</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">📋 Lab Reports</div>
+                    <div class="example-desc">Blood tests, urine analysis, medical reports</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">📄 Medical Documents</div>
+                    <div class="example-desc">Prescriptions, medical certificates, health records</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        const SERVER_URL = 'http://localhost:5000';
+
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewArea = document.getElementById('previewArea');
+        const previewImage = document.getElementById('previewImage');
+        const promptInput = document.getElementById('promptInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loadingArea = document.getElementById('loadingArea');
+        const responseArea = document.getElementById('responseArea');
+        const responseTitle = document.getElementById('responseTitle');
+        const responseText = document.getElementById('responseText');
+
+        // File input change handler
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+
+        function processFile(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file.');
+                return;
+            }
+
+            // Validate file size (16MB)
+            if (file.size > 16 * 1024 * 1024) {
+                showError('File size must be less than 16MB.');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewArea.style.display = 'block';
+                analyzeBtn.disabled = false;
+                uploadArea.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
+            selectedFile = null;
+            previewArea.style.display = 'none';
+            uploadArea.style.display = 'block';
+            analyzeBtn.disabled = true;
+            fileInput.value = '';
+            hideResponse();
+        }
+
+        async function analyzeImage() {
+            if (!selectedFile) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            // Show loading
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '🔄 Analyzing...';
+            loadingArea.style.display = 'block';
+            hideResponse();
+
+            try {
+                // Create FormData
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                formData.append('prompt', promptInput.value.trim());
+
+                // Send request
+                const response = await fetch(`${SERVER_URL}/upload_image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResponse(data.reply || 'Analysis completed successfully!');
+                } else {
+                    showError(data.error || 'An error occurred during analysis.');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to connect to the server. Make sure the chatbot server is running on http://localhost:5000');
+            } finally {
+                // Reset button
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 Analyze Image';
+                loadingArea.style.display = 'none';
+            }
+        }
+
+        function showResponse(message) {
+            responseArea.style.display = 'block';
+            responseArea.classList.remove('error');
+            responseTitle.textContent = 'Analysis Result:';
+            responseText.textContent = message;
+        }
+
+        function showError(message) {
+            responseArea.style.display = 'block';
+            responseArea.classList.add('error');
+            responseTitle.textContent = 'Error:';
+            responseText.textContent = message;
+        }
+
+        function hideResponse() {
+            responseArea.style.display = 'none';
+        }
+
+        // Add reset button functionality
+        previewArea.addEventListener('click', function(e) {
+            if (e.target.tagName === 'DIV' && e.target.textContent.includes('📷')) {
+                if (confirm('Do you want to upload a different image?')) {
+                    resetUpload();
+                }
+            }
+        });
+
+        // Test server connection on page load
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch(`${SERVER_URL}/health`);
+                const data = await response.json();
+                console.log('✅ Server connected:', data);
+                
+                // Show connection status
+                if (data.status === 'healthy') {
+                    document.querySelector('.header p').textContent = 
+                        `Upload medical images for AI-powered analysis ✅ Server Connected`;
+                    document.querySelector('.header p').style.color = '#28a745';
+                }
+            } catch (error) {
+                console.warn('❌ Server not connected:', error);
+                document.querySelector('.header p').textContent = 
+                    `❌ Server not connected. Please start the chatbot server first.`;
+                document.querySelector('.header p').style.color = '#dc3545';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -461,7 +461,7 @@ class _FindDoctorsPageState extends State<FindDoctorsPage> with TickerProviderSt
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 20,
                                 mainAxisSpacing: 20,
-                                childAspectRatio: 0.95,
+                                childAspectRatio: 0.85, // Reduced to provide more height for content
                                 children: [
                                   _buildEnhancedCategoryCard(
                                     context,
@@ -594,12 +594,12 @@ class _FindDoctorsPageState extends State<FindDoctorsPage> with TickerProviderSt
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(16), // Reduced padding to provide more space
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(14), // Slightly reduced padding
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: gradient,
@@ -617,22 +617,24 @@ class _FindDoctorsPageState extends State<FindDoctorsPage> with TickerProviderSt
                 ),
                 child: Icon(
                   icon,
-                  size: 28,
+                  size: 26, // Slightly reduced icon size
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 16),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
+              SizedBox(height: 12), // Reduced space between icon and text
+              Expanded( // Wrap in Expanded to use all available space
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 14, // Reduced font size slightly
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
